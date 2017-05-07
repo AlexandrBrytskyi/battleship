@@ -1,10 +1,11 @@
 package org.battleship.model.ships;
 
 
+import org.battleship.model.bits.BitResult;
 import org.battleship.model.boards.BoardSquare;
 
 public interface BoardSquareHitObserver {
 
-    void mySquareHitten(BoardSquare square);
+    BitResult mySquareHitten(BoardSquare square);
 
 }

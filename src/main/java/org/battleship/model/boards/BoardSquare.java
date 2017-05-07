@@ -2,6 +2,8 @@ package org.battleship.model.boards;
 
 
 import org.battleship.exceptions.CantBitBorderSquareException;
+import org.battleship.model.bits.BitResult;
+import org.battleship.model.bits.MissedResult;
 import org.battleship.model.ships.Ship;
 
 public class BoardSquare implements BoardSquareHitObservable {
@@ -17,14 +19,15 @@ public class BoardSquare implements BoardSquareHitObservable {
         this.xPosition = xPosition;
     }
 
-    public void hitMe() throws CantBitBorderSquareException {
+    public BitResult hitMe() throws CantBitBorderSquareException {
         if (!canBit) throw new CantBitBorderSquareException("Sorry, this border square can`t be bitten");
         canBit = false;
-        if (isUnderBoard()) notifyParentShipAboutHitting(this);
+        if (isUnderBoard()) return notifyParentShipAboutHitting(this);
+        return new MissedResult(this);
     }
 
-    public void notifyParentShipAboutHitting(BoardSquare boardSquare) {
-        owner.mySquareHitten(boardSquare);
+    public BitResult notifyParentShipAboutHitting(BoardSquare boardSquare) {
+       return owner.mySquareHitten(boardSquare);
     }
 
     public int getyPosition() {

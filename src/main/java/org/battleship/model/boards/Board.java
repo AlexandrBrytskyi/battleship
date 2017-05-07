@@ -4,6 +4,7 @@ package org.battleship.model.boards;
 import org.battleship.exceptions.CantBitBorderSquareException;
 import org.battleship.exceptions.SquareIsUnderShipException;
 import org.battleship.exceptions.UnsupportedShipException;
+import org.battleship.model.bits.BitResult;
 import org.battleship.model.ships.Ship;
 
 import java.util.*;
@@ -30,13 +31,13 @@ public abstract class Board {
 
     protected abstract void putShipOnBoard(Ship ship, List<BoardSquare> squares) throws UnsupportedShipException, SquareIsUnderShipException;
 
-    public void squareAtacked(char x, int y) throws CantBitBorderSquareException {
-        getBorderSquareByCharXIntY(x, y).hitMe();
+    public BitResult squareAtacked(char x, int y) throws CantBitBorderSquareException {
+       return getBorderSquareByCharXIntY(x, y).hitMe();
     }
 
-    public abstract void shipBitted(BoardSquare square, Ship ship);
+    public abstract BitResult shipBitted(BoardSquare square, Ship ship);
 
-    public abstract void shipDestroyed(Ship ship);
+    public abstract BitResult shipDestroyed(Ship ship);
 
 
     private void initBoard() {

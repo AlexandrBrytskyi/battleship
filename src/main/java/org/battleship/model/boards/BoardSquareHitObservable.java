@@ -1,8 +1,10 @@
 package org.battleship.model.boards;
 
 
+import org.battleship.model.bits.BitResult;
+
 public interface BoardSquareHitObservable {
 
-    void notifyParentShipAboutHitting(BoardSquare boardSquare);
+    BitResult notifyParentShipAboutHitting(BoardSquare boardSquare);
 
 }

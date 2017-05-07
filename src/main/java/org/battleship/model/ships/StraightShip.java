@@ -1,6 +1,7 @@
 package org.battleship.model.ships;
 
 
+import org.battleship.model.bits.BitResult;
 import org.battleship.model.boards.BoardSquare;
 
 import java.util.List;
@@ -14,8 +15,8 @@ public class StraightShip extends Ship {
         this.length = length;
     }
 
-    public void mySquareHitten(BoardSquare square) {
-        shipHitted(square);
+    public BitResult mySquareHitten(BoardSquare square) {
+       return shipHitted(square);
     }
 
     public int getLength() {

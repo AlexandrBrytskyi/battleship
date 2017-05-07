@@ -4,6 +4,9 @@ package org.battleship.model.boards;
 import org.battleship.exceptions.SquareIsUnderShipException;
 import org.battleship.exceptions.UnsupportedShipException;
 import org.battleship.exceptions.WrongBoardStringException;
+import org.battleship.model.bits.BitResult;
+import org.battleship.model.bits.ShipBittedResult;
+import org.battleship.model.bits.ShipDestroyedResult;
 import org.battleship.model.ships.Ship;
 import org.battleship.model.ships.StraightShip;
 
@@ -69,12 +72,18 @@ public class TenXTenStandardBoard extends Board {
         return result;
     }
 
-    public void shipBitted(BoardSquare square, Ship ship) {
+    public BitResult shipBitted(BoardSquare square, Ship ship) {
 
+        return new ShipBittedResult(square);
     }
 
-    public void shipDestroyed(Ship ship) {
-
+    public BitResult shipDestroyed(Ship ship) {
+// make squares around not beatable
+        List<BoardSquare> allBeatedSquares = (List<BoardSquare>) wrapShipSquaresWithNeededSquares(ship.getPlaceOnBoard());
+        for (BoardSquare beatedSquare : allBeatedSquares) {
+            beatedSquare.setCanBit(false);
+        }
+        return new ShipDestroyedResult(ship.getPlaceOnBoard(), allBeatedSquares);
     }
 
     public void initShipsOnBoardCounter() {

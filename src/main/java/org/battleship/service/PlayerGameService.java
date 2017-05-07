@@ -1,14 +1,16 @@
 package org.battleship.service;
 
 
-import org.battleship.model.players.Player;
+import org.battleship.service.players.Player;
 import org.battleship.model.ships.Ship;
 
-public interface PlayerService {
+public interface PlayerGameService {
 
-    void register(Player player);
+    void registerInGame(Player player);
 
     void sendMessageToChat(String message);
+
+    void receiveMessage(String message);
 
     void putShipOnBoard(Ship ship);
 
@@ -18,6 +20,6 @@ public interface PlayerService {
 
     void capitulate();
 
-    void bangBoardSquare(char x, int y);
+    void bitSquare(char x, int y);
 
 }

@@ -1,6 +1,7 @@
 package org.battleship.model.ships;
 
 
+import org.battleship.model.bits.BitResult;
 import org.battleship.model.boards.Board;
 import org.battleship.model.boards.BoardSquare;
 
@@ -22,14 +23,14 @@ public abstract class Ship implements BoardSquareHitObserver {
         setPlaceOnBoard(boardSquares);
     }
 
-    protected void shipHitted(BoardSquare boardSquare) {
-        ownerBoard.shipBitted(boardSquare, this);
+    protected BitResult shipHitted(BoardSquare boardSquare) {
         hittedSquaresCounter++;
-        if (hittedSquaresCounter == placeOnBoard.size()) shipDestroyed();
+        if (hittedSquaresCounter == placeOnBoard.size()) return shipDestroyed();
+       return ownerBoard.shipBitted(boardSquare, this);
     }
 
-    protected void shipDestroyed() {
-        ownerBoard.shipDestroyed(this);
+    protected BitResult shipDestroyed() {
+      return   ownerBoard.shipDestroyed(this);
     }
 
 
