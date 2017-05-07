@@ -14,16 +14,8 @@ public class StraightShip extends Ship {
         this.length = length;
     }
 
-    protected void setShipPlaceOnBoard(List<BoardSquare> boardSquares) {
-
-    }
-
-    protected void shipHitted(BoardSquare boardSquare) {
-
-    }
-
-    protected void shipDestroyed() {
-
+    public void mySquareHitten(BoardSquare square) {
+        shipHitted(square);
     }
 
     public int getLength() {
@@ -37,4 +29,6 @@ public class StraightShip extends Ship {
                 "length=" + length +
                 "} " + super.toString();
     }
+
+
 }

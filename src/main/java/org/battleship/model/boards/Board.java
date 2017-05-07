@@ -1,34 +1,42 @@
 package org.battleship.model.boards;
 
 
+import org.battleship.exceptions.CantBitBorderSquareException;
+import org.battleship.exceptions.SquareIsUnderShipException;
+import org.battleship.exceptions.UnsupportedShipException;
 import org.battleship.model.ships.Ship;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public abstract class Board {
 
-    private BoardSquare[][] squares;
-    private String borderTopName = "RESPUBLIKA";
-    private List<Ship> shipsOnBoard = new ArrayList<Ship>();
+    protected BoardSquare[][] squares;
+    protected String borderTopName = "RESPUBLIKA";
+    protected Map<Character, Integer> indexesXOfSquaresInArrayByCharacter = new HashMap<Character, Integer>();
+    protected List<Ship> shipsOnBoard = new ArrayList<Ship>();
+    protected ShipsOnBoardCounter shipsOnBoardCounter;
 
     public Board() {
         initBoard();
+        initShipsOnBoardCounter();
     }
 
     public Board(String borderTopName) {
         this.borderTopName = borderTopName;
+        initShipsOnBoardCounter();
         initBoard();
     }
 
-    protected abstract void putShipOnBoard(Ship ship);
 
-    protected abstract void squareAtacked(int x, int y);
+    protected abstract void putShipOnBoard(Ship ship, List<BoardSquare> squares) throws UnsupportedShipException, SquareIsUnderShipException;
 
-    protected abstract void shipBitted(Ship ship);
+    public void squareAtacked(char x, int y) throws CantBitBorderSquareException {
+        getBorderSquareByCharXIntY(x, y).hitMe();
+    }
 
-    protected abstract void shipDestroyed(Ship ship);
+    public abstract void shipBitted(BoardSquare square, Ship ship);
+
+    public abstract void shipDestroyed(Ship ship);
 
 
     private void initBoard() {
@@ -39,9 +47,21 @@ public abstract class Board {
             for (int i = 0; i < borderTopNameChars.length; i++) {
                 squares[i][counterX] = new BoardSquare(i + 1, c);
             }
-            counterX++;
+            indexesXOfSquaresInArrayByCharacter.put(c, counterX++);
         }
     }
+
+    public BoardSquare getBorderSquareByCharXIntY(char x, int y) {
+        int xPositionOfSquare = getIndexesXOfSquaresInArrayByCharacter().get(x);
+        int yPositionOfSquare = y - 1;
+        return squares[yPositionOfSquare][xPositionOfSquare];
+    }
+
+    public ShipsOnBoardCounter getShipsOnBoardCounter() {
+        return shipsOnBoardCounter;
+    }
+
+    public abstract void initShipsOnBoardCounter();
 
     public BoardSquare[][] getSquares() {
         return squares;
@@ -67,6 +87,10 @@ public abstract class Board {
         this.shipsOnBoard = shipsOnBoard;
     }
 
+    public Map<Character, Integer> getIndexesXOfSquaresInArrayByCharacter() {
+        return indexesXOfSquaresInArrayByCharacter;
+    }
+
     @Override
     public String toString() {
         return "Board{" +
@@ -83,7 +107,5 @@ public abstract class Board {
         return res.toString();
     }
 
-    public static void main(String[] args) {
-        System.out.println(new TenXTenSimpleBoard());
-    }
+
 }

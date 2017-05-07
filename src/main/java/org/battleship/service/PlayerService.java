@@ -18,6 +18,6 @@ public interface PlayerService {
 
     void capitulate();
 
-    void bangBoardSquare(int x, int y);
+    void bangBoardSquare(char x, int y);
 
 }
