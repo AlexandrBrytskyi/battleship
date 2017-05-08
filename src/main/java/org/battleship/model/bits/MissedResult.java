@@ -5,7 +5,7 @@ import org.battleship.model.boards.BoardSquare;
 
 public class MissedResult extends BitResult {
 
-    private MissedActivity missedActivity;
+    private MissedActivity missedActivity = (MissedActivity) vasia;
     private BoardSquare missedBorderSquare;
 
     public MissedResult(BoardSquare missedBorderSquare) {

@@ -16,6 +16,7 @@ public abstract class Board {
     protected Map<Character, Integer> indexesXOfSquaresInArrayByCharacter = new HashMap<Character, Integer>();
     protected List<Ship> shipsOnBoard = new ArrayList<Ship>();
     protected ShipsOnBoardCounter shipsOnBoardCounter;
+    protected boolean isReadyToPlay = false;
 
     public Board() {
         initBoard();
@@ -29,7 +30,7 @@ public abstract class Board {
     }
 
 
-    protected abstract void putShipOnBoard(Ship ship, List<BoardSquare> squares) throws UnsupportedShipException, SquareIsUnderShipException;
+    public abstract void putShipOnBoard(Ship ship, List<BoardSquare> squares) throws UnsupportedShipException, SquareIsUnderShipException;
 
     public BitResult squareAtacked(char x, int y) throws CantBitBorderSquareException {
        return getBorderSquareByCharXIntY(x, y).hitMe();
@@ -56,6 +57,10 @@ public abstract class Board {
         int xPositionOfSquare = getIndexesXOfSquaresInArrayByCharacter().get(x);
         int yPositionOfSquare = y - 1;
         return squares[yPositionOfSquare][xPositionOfSquare];
+    }
+
+    public boolean isReadyToPlay() {
+        return isReadyToPlay;
     }
 
     public ShipsOnBoardCounter getShipsOnBoardCounter() {
@@ -107,6 +112,7 @@ public abstract class Board {
         }
         return res.toString();
     }
+
 
 
 }

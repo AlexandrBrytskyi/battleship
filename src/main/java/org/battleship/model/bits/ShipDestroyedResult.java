@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ShipDestroyedResult extends BitResult {
 
-    private ShipDestroyedActivity shipDestroyedActivity;
+    private ShipDestroyedActivity shipDestroyedActivity = (ShipDestroyedActivity) vasia;
     private List<BoardSquare> shipSquares;
     private List<BoardSquare> bittedSquares;
 

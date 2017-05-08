@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class TenXTenStandardBoard extends Board {
 
+    public static int SHIPS_AMOUNT_NEEDED = 10;
 
     public TenXTenStandardBoard() {
 
@@ -26,7 +27,7 @@ public class TenXTenStandardBoard extends Board {
         checkName(borderTopName);
     }
 
-    protected void putShipOnBoard(Ship ship, List<BoardSquare> squares) throws UnsupportedShipException, SquareIsUnderShipException {
+    public void putShipOnBoard(Ship ship, List<BoardSquare> squares) throws UnsupportedShipException, SquareIsUnderShipException {
         if (!(ship instanceof StraightShip))
             throw new UnsupportedShipException(ship.getClass().getName() + " is not supported for this board!");
         StraightShip straightShip = (StraightShip) ship;
@@ -36,6 +37,7 @@ public class TenXTenStandardBoard extends Board {
         Set<BoardSquare> neededSquares = wrapShipSquaresWithNeededSquares(squares);
         checkIfSquaresAreFree(neededSquares);
         changeSquaresAndPutShipOnBoard(ship, squares);
+        if (shipsOnBoard.size()==SHIPS_AMOUNT_NEEDED) isReadyToPlay = true;
     }
 
     private void changeSquaresAndPutShipOnBoard(Ship ship, List<BoardSquare> squares) {
@@ -50,13 +52,13 @@ public class TenXTenStandardBoard extends Board {
 
     private void checkIfSquaresAreFree(Set<BoardSquare> neededSquares) throws SquareIsUnderShipException {
         for (BoardSquare square : neededSquares) {
-            if (square.isUnderBoard())
+            if (square.isUnderShip())
                 throw new SquareIsUnderShipException("Square " + square.getxPosition() + "-"
                         + square.getyPosition() + " is already under ship " + square.getOwnerShip().getName(), square);
         }
     }
 
-    private Set<BoardSquare> wrapShipSquaresWithNeededSquares(List<BoardSquare> squares) {
+    public Set<BoardSquare> wrapShipSquaresWithNeededSquares(List<BoardSquare> squares) {
         Set<BoardSquare> result = new HashSet<BoardSquare>(squares);
         for (BoardSquare square : squares) {
             int xPositionOfSquare = getIndexesXOfSquaresInArrayByCharacter().get(square.getxPosition());
@@ -158,22 +160,6 @@ public class TenXTenStandardBoard extends Board {
         }
 
     }
-
-//    public static void main(String[] args) {
-//        final Board board = new TenXTenStandardBoard();
-//        try {
-//            board.putShipOnBoard(new StraightShip("Vasia", 1), new ArrayList<BoardSquare>(){{
-//                add(board.getBorderSquareByCharXIntY('R',1));
-//            }});
-//            board.putShipOnBoard(new StraightShip("Vasia", 1), new ArrayList<BoardSquare>(){{
-//                add(board.getBorderSquareByCharXIntY('E',1));
-//            }});
-//        } catch (UnsupportedShipException e) {
-//            e.printStackTrace();
-//        } catch (SquareIsUnderShipException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
 
 }

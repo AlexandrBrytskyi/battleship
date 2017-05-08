@@ -5,7 +5,7 @@ import org.battleship.model.boards.BoardSquare;
 
 public class ShipBittedResult extends BitResult {
 
-    public ShipBittedActivity shipBittedActivity;
+    public ShipBittedActivity shipBittedActivity= (ShipBittedActivity) vasia;
     private BoardSquare bittedBoardSquare;
 
     public ShipBittedResult(BoardSquare bittedBoardSquare) {

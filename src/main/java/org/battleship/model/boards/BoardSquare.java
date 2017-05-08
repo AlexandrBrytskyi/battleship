@@ -2,6 +2,7 @@ package org.battleship.model.boards;
 
 
 import org.battleship.exceptions.CantBitBorderSquareException;
+import org.battleship.gui.GUI;
 import org.battleship.model.bits.BitResult;
 import org.battleship.model.bits.MissedResult;
 import org.battleship.model.ships.Ship;
@@ -22,7 +23,7 @@ public class BoardSquare implements BoardSquareHitObservable {
     public BitResult hitMe() throws CantBitBorderSquareException {
         if (!canBit) throw new CantBitBorderSquareException("Sorry, this border square can`t be bitten");
         canBit = false;
-        if (isUnderBoard()) return notifyParentShipAboutHitting(this);
+        if (isUnderShip()) return notifyParentShipAboutHitting(this);
         return new MissedResult(this);
     }
 
@@ -46,7 +47,7 @@ public class BoardSquare implements BoardSquareHitObservable {
         this.xPosition = xPosition;
     }
 
-    public boolean isUnderBoard() {
+    public boolean isUnderShip() {
         return isUnderBoard;
     }
 
@@ -72,6 +73,10 @@ public class BoardSquare implements BoardSquareHitObservable {
 
     @Override
     public boolean equals(Object o) {
+
+        if (o instanceof GUI.MyBoardButton) {
+            if (((GUI.MyBoardButton) o).getYVal()==getyPosition() && ((GUI.MyBoardButton) o).getXVal()==getxPosition()) return true;
+        }
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -93,7 +98,7 @@ public class BoardSquare implements BoardSquareHitObservable {
         return "BoardSquare{" +
                 "yPosition=" + yPosition +
                 ", xPosition=" + xPosition +
-                ", isUnderBoard=" + isUnderBoard +
+                ", isUnderShip=" + isUnderBoard +
                 ", canBit=" + canBit +
                 '}';
     }
