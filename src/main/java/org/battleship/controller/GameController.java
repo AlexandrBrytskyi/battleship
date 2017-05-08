@@ -1,6 +1,7 @@
 package org.battleship.controller;
 
 
+import org.battleship.exceptions.CantBitBorderSquareException;
 import org.battleship.model.bits.BitResult;
 import org.battleship.model.bits.OneMoreBittable;
 import org.battleship.service.GameService;
@@ -46,7 +47,7 @@ public class GameController implements GameService {
 
     public void askForAddingShips() {
         for (UserService userService : idUserServicesMap.values()) {
-          taskExecutor.submit(() -> userService.askedForAddingShips());
+            taskExecutor.submit(() -> userService.askedForAddingShips());
         }
 
 
@@ -85,12 +86,24 @@ public class GameController implements GameService {
         if (result instanceof OneMoreBittable) askForBit(playerId);
     }
 
-// TODO: 08.05.2017 when game controller asks for beat action should be in concrette userService and return result back to game controller in order to initiator service got correct result as far as actual ships situation is full only on board which is composed in concrette user service
+// TODO: 08.05.2017 when game controller asks for beat action should be in concrette userService and return result back
+// to game controller in order to initiator service got correct result as far as actual ships situation is full only on
+// board which is composed in concrette user service
 
     public void sendMessage(String playerId, String message) {
         for (UserService service : idUserServicesMap.values()) {
             service.messageReceived(playerId + ": " + message);
         }
+    }
+
+    @Override
+    public BitResult bitOpponent(char x, int y, String attackerServiceId) throws CantBitBorderSquareException {
+        return getOpponentService(attackerServiceId).oppenentBitsMyBoardSquare(x, y);
+    }
+
+    private UserService getOpponentService(String attackerServiceId) {
+        return idUserServicesMap.entrySet().stream().filter(e -> !e.getKey().equals(attackerServiceId)).findFirst().get().getValue();
+
     }
 
     public void shipKilled(String killerId) {

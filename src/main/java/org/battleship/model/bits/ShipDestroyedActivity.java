@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface ShipDestroyedActivity  extends OneMoreBittable{
 
-    void markShipOnBoard(List<BoardSquare> squares);
+    void markShipOnOpponentBoard(List<BoardSquare> squares);
 
-    void markBittedSquares(List<BoardSquare> bittedSquares);
+    void markMissedSquaresOnOpponenBoard(List<BoardSquare> bittedSquares);
 
 
 }

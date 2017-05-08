@@ -13,6 +13,7 @@ import org.battleship.model.ships.StraightShip;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class TenXTenStandardBoard extends Board {
 
@@ -82,9 +83,10 @@ public class TenXTenStandardBoard extends Board {
 
     public BitResult shipDestroyed(Ship ship) {
 // make squares around not beatable
-        List<BoardSquare> allBeatedSquares = (List<BoardSquare>) wrapShipSquaresWithNeededSquares(ship.getPlaceOnBoard());
+        List<BoardSquare> allBeatedSquares = wrapShipSquaresWithNeededSquares(ship.getPlaceOnBoard()).stream().collect(Collectors.toList());
         for (BoardSquare beatedSquare : allBeatedSquares) {
             beatedSquare.setCanBit(false);
+            beatedSquare.setUnderShip(true);
         }
         return new ShipDestroyedResult(ship.getPlaceOnBoard(), allBeatedSquares);
     }

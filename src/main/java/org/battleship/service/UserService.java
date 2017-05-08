@@ -25,7 +25,9 @@ public interface UserService {
 
     void mySquareBitted(BoardSquare square);
 
-    BitResult bit(char x, int y) throws CantBitBorderSquareException;
+    BitResult bitOpponentBoardSquare(char x, int y) throws CantBitBorderSquareException;
+
+    BitResult oppenentBitsMyBoardSquare(char x, int y) throws CantBitBorderSquareException;
 
     void setMyId(String id);
 

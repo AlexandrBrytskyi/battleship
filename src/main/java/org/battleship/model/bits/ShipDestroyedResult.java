@@ -7,7 +7,6 @@ import java.util.List;
 
 public class ShipDestroyedResult extends BitResult {
 
-    private ShipDestroyedActivity shipDestroyedActivity = event;
     private List<BoardSquare> shipSquares;
     private List<BoardSquare> bittedSquares;
 
@@ -17,12 +16,9 @@ public class ShipDestroyedResult extends BitResult {
     }
 
     public void afterResultReceivedAction() {
-        shipDestroyedActivity.markBittedSquares(bittedSquares);
-        shipDestroyedActivity.markShipOnBoard(shipSquares);
-        shipDestroyedActivity.bitOneMore();
+        event.markMissedSquaresOnOpponenBoard(bittedSquares);
+        event.markShipOnOpponentBoard(shipSquares);
+        event.bitOneMore();
     }
 
-    public void setShipDestroyedActivity(ShipDestroyedActivity shipDestroyedActivity) {
-        this.shipDestroyedActivity = shipDestroyedActivity;
-    }
 }

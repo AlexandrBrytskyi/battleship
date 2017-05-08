@@ -5,7 +5,6 @@ import org.battleship.model.boards.BoardSquare;
 
 public class MissedResult extends BitResult {
 
-    private MissedActivity missedActivity = event;
     private BoardSquare missedBorderSquare;
 
     public MissedResult(BoardSquare missedBorderSquare) {
@@ -13,10 +12,7 @@ public class MissedResult extends BitResult {
     }
 
     public void afterResultReceivedAction() {
-        missedActivity.markBorderSquareAsMissed(missedBorderSquare);
+        event.markBorderSquareAsMissed(missedBorderSquare);
     }
 
-    public void setMissedActivity(MissedActivity missedActivity) {
-        this.missedActivity = missedActivity;
-    }
 }

@@ -5,7 +5,6 @@ import org.battleship.model.boards.BoardSquare;
 
 public class ShipBittedResult extends BitResult {
 
-    public ShipBittedActivity shipBittedActivity = event;;
     private BoardSquare bittedBoardSquare;
 
     public ShipBittedResult(BoardSquare bittedBoardSquare) {
@@ -13,11 +12,8 @@ public class ShipBittedResult extends BitResult {
     }
 
     public void afterResultReceivedAction() {
-        shipBittedActivity.markSquareAsBitted(bittedBoardSquare);
-        shipBittedActivity.bitOneMore();
+        event.markSquareAsBitted(bittedBoardSquare);
+        event.bitOneMore();
     }
 
-    public void setShipBittedActivity(ShipBittedActivity shipBittedActivity) {
-        this.shipBittedActivity = shipBittedActivity;
-    }
 }

@@ -17,6 +17,8 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 public class GUI extends JFrame {
@@ -109,7 +111,7 @@ public class GUI extends JFrame {
 
     public BitResult askedForBit() {
         try {
-            appendMessage("Your turn to bit");
+            appendMessage("Your turn to bitOpponentBoardSquare");
             canBeatMyButton.set(true);
             isWaitingForBit.set(true);
             MyBoardButton bitted = waitingService.submit(new Callable<MyBoardButton>() {
@@ -123,7 +125,7 @@ public class GUI extends JFrame {
             }).get();
             bittedMyButton = null;
             canBeatMyButton.set(false);
-            return userService.bit(bitted.getXVal(), bitted.getYVal());
+            return userService.bitOpponentBoardSquare(bitted.getXVal(), bitted.getYVal());
         } catch (Throwable e) {
             appendMessage("Sorry, have problem: " + e.getMessage());
             e.printStackTrace();
@@ -140,12 +142,12 @@ public class GUI extends JFrame {
 
     public void updateMySquare(BoardSquare mySquare) {
         MyBoardButton button = myBoardButtons.get(myBoardButtons.indexOf(mySquare));
-        button.setBitted(!mySquare.isCanBit(), mySquare.isUnderShip());
+        button.setBitted(mySquare.isCanBit(), mySquare.isUnderShip());
     }
 
     public void updateOpponentSquare(BoardSquare missedBorderSquare) {
         MyBoardButton button = opponentBoardButtons.get(opponentBoardButtons.indexOf(missedBorderSquare));
-        button.setBitted(!missedBorderSquare.isCanBit(), missedBorderSquare.isUnderShip());
+        button.setBitted(missedBorderSquare.isCanBit(), missedBorderSquare.isUnderShip());
     }
 
     public void appendMessage(String mess) {
@@ -258,22 +260,27 @@ public class GUI extends JFrame {
     public class MyBoardButton extends JButton {
         private char xVal;
         private int yVal;
+        private Color currentColor;
+        private Color prevColor;
+        private Lock mouseOverLock = new ReentrantLock();
+        private Lock mouseExitedLock = new ReentrantLock();
 
         public MyBoardButton(char x, int y) {
             super();
             this.xVal = x;
             this.yVal = y;
+
+
             addMouseListener(new MouseAdapter() {
 
-                Map<MyBoardButton, Color> buttonsPrevColors = new HashMap<>();
-
+                private Set<MyBoardButton> buttonsToChangeColour = new HashSet<>();
                 List<MyBoardButton> availableDown;
                 List<MyBoardButton> availableRight;
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    super.mouseClicked(e);
                     if (isChoosingShips.get()) {
+                        super.mouseClicked(e);
                         if (!selectedShip.get()) {
 //                            lkm
                             if (e.getButton() == 1) {
@@ -299,32 +306,30 @@ public class GUI extends JFrame {
 
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    super.mouseEntered(e);
-                    if (isEnabled() && isChoosingShips.get()) {
-                        fillWithGreenPossibleVars(buttonsPrevColors);
+                    try {
+                        mouseOverLock.lock();
+                        super.mouseEntered(e);
+                        if (isEnabled() && isChoosingShips.get()) {
+                            fillWithGreenPossibleVars();
+                        }
+                    } finally {
+                        mouseOverLock.unlock();
                     }
+
                 }
 
-                private void fillWithGreenPossibleVars(Map<MyBoardButton, Color> buttonsPrevColors) {
+                private void fillWithGreenPossibleVars() {
 
                     availableDown = getAvailableDown();
                     availableRight = getAvailableRight();
-                    for (MyBoardButton button : availableDown) {
-                        buttonsPrevColors.put(button, button.getBackground());
-                    }
-                    for (MyBoardButton button : availableRight) {
-                        buttonsPrevColors.put(button, button.getBackground());
-                    }
 
-                    for (MyBoardButton myButton : availableDown) {
-                        myButton.setBackground(Color.GREEN);
-                        myButton.setOpaque(true);
+                    buttonsToChangeColour.addAll(availableDown);
+                    buttonsToChangeColour.addAll(availableRight);
+
+                    for (MyBoardButton button : buttonsToChangeColour) {
+                        button.setBackground(Color.GREEN);
                     }
-                    for (MyBoardButton myButton : availableRight) {
-                        myButton.setBackground(Color.GREEN);
-                        myButton.setOpaque(true);
-                    }
-                    mainPanel.updateUI();
+                    buttonsToChangeColour.forEach((b) -> setBackground(Color.GREEN));
 
                 }
 
@@ -354,23 +359,23 @@ public class GUI extends JFrame {
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    super.mouseExited(e);
-                    if (isChoosingShips.get()) {
-                        for (Map.Entry<MyBoardButton, Color> myBoardButtonColorEntry : buttonsPrevColors.entrySet()) {
-                            myBoardButtonColorEntry.getKey().setBackground(myBoardButtonColorEntry.getValue());
-                            myBoardButtonColorEntry.getKey().setOpaque(true);
-//                            System.out.println(myBoardButtonColorEntry);
+                    try {
+                        mouseExitedLock.lock();
+                        if (isChoosingShips.get()||!buttonsToChangeColour.isEmpty()) {
+                            buttonsToChangeColour.forEach(MyBoardButton::restoreColor);
+                            buttonsToChangeColour.clear();
                         }
-                        buttonsPrevColors.clear();
-                        mainPanel.updateUI();
+                        super.mouseExited(e);
+                    } finally {
+                        mouseExitedLock.unlock();
                     }
                 }
 
             });
         }
 
-        public void setBitted(boolean bitted, boolean underShip) {
-            if (!bitted) return;
+        public void setBitted(boolean canBit, boolean underShip) {
+            if (canBit) return;
             if (underShip) {
                 setBackground(Color.RED);
             } else {
@@ -386,6 +391,20 @@ public class GUI extends JFrame {
             setEnabled(false);
             setOpaque(true);
             mainPanel.updateUI();
+        }
+
+        @Override
+        public void setBackground(Color bg) {
+            if (currentColor != null && currentColor.equals(bg)) return;
+            prevColor = currentColor;
+            currentColor = bg;
+            super.setBackground(bg);
+        }
+
+        private void restoreColor() {
+            currentColor = prevColor;
+            prevColor = null;
+            super.setBackground(currentColor);
         }
 
         public char getXVal() {
