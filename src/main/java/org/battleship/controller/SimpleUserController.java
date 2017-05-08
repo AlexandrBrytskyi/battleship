@@ -13,8 +13,6 @@ import org.battleship.service.GameService;
 import org.battleship.service.UserService;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class SimpleUserController implements UserService, BitResultEvent {
 
@@ -59,7 +57,7 @@ public class SimpleUserController implements UserService, BitResultEvent {
 
     public BitResult bit(char x, int y) throws CantBitBorderSquareException {
         BitResult result = opponentBoard.squareAtacked(x, y);
-
+        result.setActivityRealizator(this);
         result.afterResultReceivedAction();
         return result;
     }
@@ -72,7 +70,7 @@ public class SimpleUserController implements UserService, BitResultEvent {
     public void markSquareAsBitted(BoardSquare bittedSquare) {
         BoardSquare oppSquare = opponentBoard.getBorderSquareByCharXIntY(bittedSquare.getxPosition(), bittedSquare.getyPosition());
         oppSquare.setCanBit(false);
-        oppSquare.setUnderBoard(true);
+        oppSquare.setUnderShip(true);
         gui.updateOpponentSquare(bittedSquare);
     }
 

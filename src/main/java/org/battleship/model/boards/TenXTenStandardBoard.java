@@ -33,17 +33,18 @@ public class TenXTenStandardBoard extends Board {
         StraightShip straightShip = (StraightShip) ship;
         if (straightShip.getLength() != squares.size())
             throw new UnsupportedShipException("Ship type and squares for its placing differs");
-        shipsOnBoardCounter.addShipToCounter(straightShip);
         Set<BoardSquare> neededSquares = wrapShipSquaresWithNeededSquares(squares);
         checkIfSquaresAreFree(neededSquares);
         changeSquaresAndPutShipOnBoard(ship, squares);
-        if (shipsOnBoard.size()==SHIPS_AMOUNT_NEEDED) isReadyToPlay = true;
+        shipsOnBoardCounter.addShipToCounter(straightShip);
+        if (shipsOnBoard.size() == SHIPS_AMOUNT_NEEDED) isReadyToPlay = true;
     }
 
     private void changeSquaresAndPutShipOnBoard(Ship ship, List<BoardSquare> squares) {
         for (BoardSquare square : squares) {
+            square = getBorderSquareByCharXIntY(square.getxPosition(), square.getyPosition());
             square.setOwner(ship);
-            square.setUnderBoard(true);
+            square.setUnderShip(true);
         }
         ship.setShipPlaceOnBoard(squares, this);
 

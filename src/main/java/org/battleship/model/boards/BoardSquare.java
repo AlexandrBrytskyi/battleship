@@ -11,7 +11,7 @@ public class BoardSquare implements BoardSquareHitObservable {
 
     private int yPosition;
     private char xPosition;
-    private boolean isUnderBoard = false;
+    private boolean isUnderShip = false;
     private boolean canBit = true;
     private Ship owner;
 
@@ -48,11 +48,11 @@ public class BoardSquare implements BoardSquareHitObservable {
     }
 
     public boolean isUnderShip() {
-        return isUnderBoard;
+        return isUnderShip;
     }
 
-    public void setUnderBoard(boolean underBoard) {
-        isUnderBoard = underBoard;
+    public void setUnderShip(boolean underShip) {
+        isUnderShip = underShip;
     }
 
     public boolean isCanBit() {
@@ -98,7 +98,7 @@ public class BoardSquare implements BoardSquareHitObservable {
         return "BoardSquare{" +
                 "yPosition=" + yPosition +
                 ", xPosition=" + xPosition +
-                ", isUnderShip=" + isUnderBoard +
+                ", isUnderShip=" + isUnderShip +
                 ", canBit=" + canBit +
                 '}';
     }

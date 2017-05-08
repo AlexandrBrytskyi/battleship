@@ -79,11 +79,13 @@ public class GameController implements GameService {
         }
     }
 
+
     public void askForBit(String playerId) {
         BitResult result = idUserServicesMap.get(playerId).askedForBit();
         if (result instanceof OneMoreBittable) askForBit(playerId);
     }
 
+// TODO: 08.05.2017 when game controller asks for beat action should be in concrette userService and return result back to game controller in order to initiator service got correct result as far as actual ships situation is full only on board which is composed in concrette user service
 
     public void sendMessage(String playerId, String message) {
         for (UserService service : idUserServicesMap.values()) {
