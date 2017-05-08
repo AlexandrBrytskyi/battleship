@@ -14,18 +14,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ManManGameController implements GameService {
+public class GameController implements GameService {
 
     private Map<String, UserService> idUserServicesMap = new HashMap<String, UserService>();
     private Map<String, AtomicInteger> idUserKilledShipsMap = new HashMap<String, AtomicInteger>();
     public static final int GOAL_SHIPS_TO_KILL = 10;
     private ExecutorService taskExecutor = Executors.newFixedThreadPool(4);
 
-    public ManManGameController(UserService user1service, UserService user2service) {
+    public GameController(UserService user1service, UserService user2service) {
         putNewUserToMapAndGiveItIdentifier(user1service);
         putNewUserToMapAndGiveItIdentifier(user2service);
-        startLogic();
-        return;
     }
 
     public void startLogic() {

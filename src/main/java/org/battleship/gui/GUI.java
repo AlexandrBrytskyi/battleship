@@ -66,9 +66,8 @@ public class GUI extends JFrame {
     }
 
     private void tryToSelectShip(int shipSize, int amountShipsNeeded) {
-        showInfoDialog("Need to choose " + amountShipsNeeded + " with size " + shipSize +
-                        "\nclick mouse left for horisontal alignment and right for vertical",
-                "Adding Ships", JOptionPane.INFORMATION_MESSAGE);
+        appendMessage("Need to choose " + amountShipsNeeded + " with size " + shipSize +
+                "\nclick mouse left for horisontal alignment and right for vertical");
         isChoosingShips.set(true);
         neededShipLength = shipSize;
         Future<List<BoardSquare>> selectedSquaresFuture = waitingService.submit(new Callable<List<BoardSquare>>() {
@@ -110,7 +109,7 @@ public class GUI extends JFrame {
 
     public BitResult askedForBit() {
         try {
-            showInfoDialog("Your turn to bit", "FIGHT", JOptionPane.INFORMATION_MESSAGE);
+            appendMessage("Your turn to bit");
             canBeatMyButton.set(true);
             isWaitingForBit.set(true);
             MyBoardButton bitted = waitingService.submit(new Callable<MyBoardButton>() {
@@ -126,8 +125,8 @@ public class GUI extends JFrame {
             canBeatMyButton.set(false);
             return userService.bit(bitted.getXVal(), bitted.getYVal());
         } catch (Throwable e) {
-            showInfoDialog("Sorry, have problem: " + e.getMessage(),
-                    "Bitting Ship error", JOptionPane.INFORMATION_MESSAGE);
+            appendMessage("Sorry, have problem: " + e.getMessage());
+            e.printStackTrace();
             return askedForBit();
         }
     }

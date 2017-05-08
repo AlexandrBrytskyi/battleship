@@ -4,10 +4,7 @@ import org.battleship.exceptions.CantBitBorderSquareException;
 import org.battleship.exceptions.SquareIsUnderShipException;
 import org.battleship.exceptions.UnsupportedShipException;
 import org.battleship.gui.GUI;
-import org.battleship.model.bits.BitResult;
-import org.battleship.model.bits.MissedActivity;
-import org.battleship.model.bits.ShipBittedActivity;
-import org.battleship.model.bits.ShipDestroyedActivity;
+import org.battleship.model.bits.*;
 import org.battleship.model.boards.Board;
 import org.battleship.model.boards.BoardSquare;
 import org.battleship.model.boards.TenXTenStandardBoard;
@@ -19,7 +16,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class SimpleUserController implements UserService, MissedActivity, ShipBittedActivity, ShipDestroyedActivity {
+public class SimpleUserController implements UserService, BitResultEvent {
 
     private Board myBoard;
     private Board opponentBoard;

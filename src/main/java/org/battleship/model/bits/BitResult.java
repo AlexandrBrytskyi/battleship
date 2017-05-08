@@ -3,12 +3,12 @@ package org.battleship.model.bits;
 
 public abstract class BitResult {
 
-    protected Object vasia;
+    protected BitResultEvent event;
 
     public abstract void afterResultReceivedAction();
 
-    public void setActivityRealizator(Object realizator){
-        this.vasia = realizator;
+    public void setActivityRealizator(BitResultEvent realizator){
+        this.event = realizator;
     }
     
 }
