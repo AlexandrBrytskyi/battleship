@@ -15,10 +15,16 @@ public class ShipDestroyedResult extends BitResult {
         this.bittedSquares = bittedSquares;
     }
 
-    public void afterResultReceivedAction() {
-        event.markMissedSquaresOnOpponenBoard(bittedSquares);
-        event.markShipOnOpponentBoard(shipSquares);
-        event.bitOneMore();
+    public void afterResultReceivedAction(boolean attacker) {
+        if (attacker) {
+            event.markMissedSquaresOnOpponenBoard(bittedSquares);
+            event.markShipOnOpponentBoard(shipSquares);
+            event.bitOneMore();
+        } else {
+            System.out.println("updated");
+            bittedSquares.forEach(event::mySquareChanged);
+            shipSquares.forEach(event::mySquareChanged);
+        }
     }
 
 }

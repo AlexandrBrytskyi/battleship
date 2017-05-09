@@ -11,5 +11,4 @@ public interface ShipDestroyedActivity  extends OneMoreBittable{
 
     void markMissedSquaresOnOpponenBoard(List<BoardSquare> bittedSquares);
 
-
 }

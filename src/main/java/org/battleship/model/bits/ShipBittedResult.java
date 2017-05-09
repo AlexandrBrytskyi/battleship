@@ -11,9 +11,13 @@ public class ShipBittedResult extends BitResult {
         this.bittedBoardSquare = bittedBoardSquare;
     }
 
-    public void afterResultReceivedAction() {
-        event.markSquareAsBitted(bittedBoardSquare);
-        event.bitOneMore();
+    public void afterResultReceivedAction(boolean attacker) {
+        if (attacker) {
+            event.markOpponentsSquareAsBitted(bittedBoardSquare);
+            event.bitOneMore();
+        } else {
+            event.mySquareChanged(bittedBoardSquare);
+        }
     }
 
 }

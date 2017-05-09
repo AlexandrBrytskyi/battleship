@@ -54,14 +54,15 @@ public class TenXTenStandardBoard extends Board {
 
     private void checkIfSquaresAreFree(Set<BoardSquare> neededSquares) throws SquareIsUnderShipException {
         for (BoardSquare square : neededSquares) {
-            if (square.isUnderShip())
+            if (square.isUnderShip()) {
                 throw new SquareIsUnderShipException("Square " + square.getxPosition() + "-"
                         + square.getyPosition() + " is already under ship " + square.getOwnerShip().getName(), square);
+            }
         }
     }
 
     public Set<BoardSquare> wrapShipSquaresWithNeededSquares(List<BoardSquare> squares) {
-        Set<BoardSquare> result = new HashSet<BoardSquare>(squares);
+        Set<BoardSquare> result = new HashSet<>();
         for (BoardSquare square : squares) {
             int xPositionOfSquare = getIndexesXOfSquaresInArrayByCharacter().get(square.getxPosition());
             int yPositionOfSquare = square.getyPosition() - 1;
@@ -69,7 +70,7 @@ public class TenXTenStandardBoard extends Board {
                 for (int y = yPositionOfSquare - 1; y <= yPositionOfSquare + 1; y++) {
                     if ((x >= 0 && x < getSquares().length) &&
                             (y >= 0 && y < getSquares().length))
-                        result.add(getSquares()[y][x]);
+                        result.add(this.squares[y][x]);
                 }
             }
         }
@@ -86,8 +87,12 @@ public class TenXTenStandardBoard extends Board {
         List<BoardSquare> allBeatedSquares = wrapShipSquaresWithNeededSquares(ship.getPlaceOnBoard()).stream().collect(Collectors.toList());
         for (BoardSquare beatedSquare : allBeatedSquares) {
             beatedSquare.setCanBit(false);
-            beatedSquare.setUnderShip(true);
+            beatedSquare.setUnderShip(false);
         }
+        ship.getPlaceOnBoard().stream().forEach((s) -> {
+            s.setUnderShip(true);
+            s.setCanBit(false);
+        });
         return new ShipDestroyedResult(ship.getPlaceOnBoard(), allBeatedSquares);
     }
 

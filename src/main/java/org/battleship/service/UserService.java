@@ -23,8 +23,6 @@ public interface UserService {
 
     BitResult askedForBit();
 
-    void mySquareBitted(BoardSquare square);
-
     BitResult bitOpponentBoardSquare(char x, int y) throws CantBitBorderSquareException;
 
     BitResult oppenentBitsMyBoardSquare(char x, int y) throws CantBitBorderSquareException;

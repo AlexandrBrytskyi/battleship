@@ -11,8 +11,12 @@ public class MissedResult extends BitResult {
         this.missedBorderSquare = missedBorderSquare;
     }
 
-    public void afterResultReceivedAction() {
-        event.markBorderSquareAsMissed(missedBorderSquare);
+    public void afterResultReceivedAction(boolean attacker) {
+        if (attacker) {
+            event.markOpponentsBorderSquareAsMissed(missedBorderSquare);
+        } else {
+            event.mySquareChanged(missedBorderSquare);
+        }
     }
 
 }

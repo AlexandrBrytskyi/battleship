@@ -53,10 +53,20 @@ public class StartGuiPage extends JFrame {
                     break;
                 }
                 case USER_BOT: {
+                    AppBuilder.runManBot(
+                            JOptionPane.showConfirmDialog(mainPanel, "Show bot gui?", "Bots board",
+                                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
+                                    JOptionPane.YES_OPTION ? true : false,
+                            JOptionPane.showConfirmDialog(mainPanel, "Do you want to create ships?", "Ships generation",
+                                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
+                                    JOptionPane.NO_OPTION ? true : false);
+                    StartGuiPage.this.dispose();
                     break;
                 }
                 case USER_USER: {
-                    AppBuilder.runManMan();
+                    AppBuilder.runManMan(
+                            JOptionPane.showConfirmDialog(mainPanel, "Do you want to create ships?", "Ships generation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
+                                    JOptionPane.NO_OPTION ? true : false);
                     StartGuiPage.this.dispose();
                     break;
                 }

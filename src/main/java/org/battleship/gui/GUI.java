@@ -1,10 +1,9 @@
 package org.battleship.gui;
 
 
+import org.battleship.controller.PlayerController;
 import org.battleship.model.bits.BitResult;
-import org.battleship.model.boards.Board;
 import org.battleship.model.boards.BoardSquare;
-import org.battleship.model.boards.TenXTenStandardBoard;
 import org.battleship.model.ships.StraightShip;
 import org.battleship.service.UserService;
 
@@ -25,7 +24,7 @@ public class GUI extends JFrame {
 
     public static final int BOARD_DIMENSION = 10;
     public static final String BOARD_TOP = "RESPUBLIKA";
-    private UserService userService;
+    private PlayerController playerController;
     private JPanel mainPanel;
     private JPanel myBoardPanel;
     private JPanel opponentBoardPanel;
@@ -35,7 +34,6 @@ public class GUI extends JFrame {
     private List<MyBoardButton> opponentBoardButtons;
     private JTextField messageField;
     private JPanel chatPanel;
-    private Board emptyBoardForJustGettingIndexes = new TenXTenStandardBoard();
     private AtomicBoolean canBeatMyButton = new AtomicBoolean(false);
     private AtomicBoolean isWaitingForBit = new AtomicBoolean(false);
     private AtomicBoolean isChoosingShips = new AtomicBoolean(false);
@@ -55,7 +53,7 @@ public class GUI extends JFrame {
     }
 
     public void askedForAddingShips() {
-        showInfoDialog("Add Ships now", "Adding Ships", JOptionPane.INFORMATION_MESSAGE);
+        showDialog("Add Ships now", "Adding Ships", JOptionPane.INFORMATION_MESSAGE);
         addShips();
     }
 
@@ -86,11 +84,11 @@ public class GUI extends JFrame {
 
             selectedSquares = new ArrayList<>();
             selectedShip.set(false);
-            userService.addShip(new StraightShip(String.valueOf(shipSize), shipSize), res);
+            playerController.addShip(new StraightShip(String.valueOf(shipSize), shipSize), res);
             markSquaresAsMyShips(res);
             isChoosingShips.set(false);
         } catch (Throwable e) {
-            showInfoDialog("Sorry, have problem: " + e.getMessage(),
+            showDialog("Sorry, have problem: " + e.getMessage(),
                     "Adding Ships error", JOptionPane.INFORMATION_MESSAGE);
             e.printStackTrace();
             tryToSelectShip(shipSize, amountShipsNeeded);
@@ -99,7 +97,7 @@ public class GUI extends JFrame {
 
     public void notifiedGameStarts() {
 
-        showInfoDialog("Ok, game is now started", "Come on", JOptionPane.INFORMATION_MESSAGE);
+        showDialog("Ok, game is now started", "Come on", JOptionPane.INFORMATION_MESSAGE);
 
         for (MyBoardButton myBoardButton : myBoardButtons) {
             myBoardButton.setEnabled(false);
@@ -125,7 +123,7 @@ public class GUI extends JFrame {
             }).get();
             bittedMyButton = null;
             canBeatMyButton.set(false);
-            return userService.bitOpponentBoardSquare(bitted.getXVal(), bitted.getYVal());
+            return playerController.bitOpponentBoardSquare(bitted.getXVal(), bitted.getYVal());
         } catch (Throwable e) {
             appendMessage("Sorry, have problem: " + e.getMessage());
             e.printStackTrace();
@@ -156,18 +154,18 @@ public class GUI extends JFrame {
 
     public void showWinnerAndExit(String winnerId) {
         messagesArea.append("Winner is " + winnerId + "\n");
-        showInfoDialog(userService.getMyId().equals(winnerId) ?
+        showDialog(playerController.getMyId().equals(winnerId) ?
                         "You are winner, Congratulations!!!" : "You are loser, sorry :(",
                 "Game ended", JOptionPane.INFORMATION_MESSAGE);
         System.exit(0);
     }
 
-    public UserService getUserService() {
-        return userService;
+    public UserService getPlayerController() {
+        return playerController;
     }
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    public void setPlayerController(PlayerController playerController) {
+        this.playerController = playerController;
         initComponents();
     }
 
@@ -182,7 +180,7 @@ public class GUI extends JFrame {
         mainPanel.updateUI();
     }
 
-    private void showInfoDialog(String message, String tittle, int type) {
+    public void showDialog(String message, String tittle, int type) {
         JOptionPane.showMessageDialog(mainPanel, message, tittle, type);
     }
 
@@ -197,7 +195,7 @@ public class GUI extends JFrame {
         sendMessageButton = new JButton("Send");
         sendMessageButton.addActionListener(l -> {
             if (!messageField.getText().isEmpty()) {
-                userService.sendMessage(messageField.getText());
+                playerController.sendMessage(messageField.getText());
                 messageField.setText("");
             }
         });

@@ -9,22 +9,20 @@ import org.battleship.model.boards.Board;
 import org.battleship.model.boards.BoardSquare;
 import org.battleship.model.ships.Ship;
 import org.battleship.service.GameService;
-import org.battleship.service.UserService;
+
 
 import java.util.List;
 
-public class SimpleUserController implements UserService, BitResultEvent {
+public class UserPlayerController extends PlayerController {
 
-    private Board myBoard;
-    private Board opponentBoard;
-    private GameService gameService;
-    private GUI gui;
-    private String myId;
+    protected GUI gui;
+    protected boolean autogenShips = false;
 
-    public SimpleUserController(GUI gui, Board myBoard, Board opponentBoard) {
+    public UserPlayerController(GUI gui, Board myBoard, Board opponentBoard, boolean autogenShips) {
         this.gui = gui;
         this.myBoard = myBoard;
         this.opponentBoard = opponentBoard;
+        this.autogenShips = autogenShips;
     }
 
     public void registerToGame() {
@@ -33,7 +31,11 @@ public class SimpleUserController implements UserService, BitResultEvent {
     }
 
     public void askedForAddingShips() {
-        gui.askedForAddingShips();
+        if (!autogenShips) {
+            gui.askedForAddingShips();
+        } else {
+           ShipsGenUtils.generateAndAddShips(this, true, gui, getMyBoard().getBorderTopName());
+        }
     }
 
     public void notifiedGameStarts() {
@@ -42,38 +44,48 @@ public class SimpleUserController implements UserService, BitResultEvent {
 
     public void addShip(Ship ship, List<BoardSquare> shipPlaceOnBoard) throws SquareIsUnderShipException, UnsupportedShipException {
         myBoard.putShipOnBoard(ship, shipPlaceOnBoard);
+        gui.markSquaresAsMyShips(shipPlaceOnBoard);
     }
 
     public BitResult askedForBit() {
         return gui.askedForBit();
     }
 
-    public void mySquareBitted(BoardSquare square) {
-        BoardSquare mySquare = myBoard.getBorderSquareByCharXIntY(square.getxPosition(), square.getyPosition());
-        mySquare.setCanBit(false);
-        gui.updateMySquare(mySquare);
-    }
 
     public BitResult bitOpponentBoardSquare(char x, int y) throws CantBitBorderSquareException {
+        System.out.println("UPC: sending game controller request to bit");
         BitResult result = gameService.bitOpponent(x, y, myId);
+        System.out.println("UPC: received bit result");
         result.setActivityRealizator(this);
-        result.afterResultReceivedAction();
+        result.afterResultReceivedAction(true);
+        System.out.println("UPC: executed and returning bit result");
         return result;
     }
 
     @Override
     public BitResult oppenentBitsMyBoardSquare(char x, int y) throws CantBitBorderSquareException {
-        return myBoard.squareAtacked(x, y);
+        System.out.println("UPC: somebody wants to bit me");
+        BitResult result = myBoard.squareAtacked(x, y);
+        System.out.println("UPC: he bited");
+        result.setActivityRealizator(this);
+        result.afterResultReceivedAction(false);
+        System.out.println("UPC: executed and returning bit result from bitted me");
+        return result;
     }
 
-    public void markBorderSquareAsMissed(BoardSquare missedBorderSquare) {
+    public void markOpponentsBorderSquareAsMissed(BoardSquare missedBorderSquare) {
         BoardSquare square = opponentBoard.getBorderSquareByCharXIntY(missedBorderSquare.getxPosition(), missedBorderSquare.getyPosition());
         square.setCanBit(false);
         square.setUnderShip(false);
         gui.updateOpponentSquare(square);
     }
 
-    public void markSquareAsBitted(BoardSquare bittedSquare) {
+    @Override
+    public void mySquareChanged(BoardSquare toUpdate) {
+        gui.updateMySquare(toUpdate);
+    }
+
+    public void markOpponentsSquareAsBitted(BoardSquare bittedSquare) {
         BoardSquare oppSquare = opponentBoard.getBorderSquareByCharXIntY(bittedSquare.getxPosition(), bittedSquare.getyPosition());
         oppSquare.setCanBit(false);
         oppSquare.setUnderShip(true);
@@ -81,13 +93,13 @@ public class SimpleUserController implements UserService, BitResultEvent {
     }
 
     public void bitOneMore() {
-        gui.askedForBit();
+        askedForBit();
     }
 
     public void markShipOnOpponentBoard(List<BoardSquare> squares) {
 
         for (BoardSquare square : squares) {
-            markSquareAsBitted(square);
+            markOpponentsSquareAsBitted(square);
         }
 
         gameService.shipKilled(myId);
@@ -95,7 +107,7 @@ public class SimpleUserController implements UserService, BitResultEvent {
 
     public void markMissedSquaresOnOpponenBoard(List<BoardSquare> bittedSquares) {
         for (BoardSquare bittedSquare : bittedSquares) {
-            markBorderSquareAsMissed(bittedSquare);
+            markOpponentsBorderSquareAsMissed(bittedSquare);
         }
     }
 
@@ -139,21 +151,5 @@ public class SimpleUserController implements UserService, BitResultEvent {
 
     public void setGui(GUI gui) {
         this.gui = gui;
-    }
-
-    public Board getMyBoard() {
-        return myBoard;
-    }
-
-    public void setMyBoard(Board myBoard) {
-        this.myBoard = myBoard;
-    }
-
-    public Board getOpponentBoard() {
-        return opponentBoard;
-    }
-
-    public void setOpponentBoard(Board opponentBoard) {
-        this.opponentBoard = opponentBoard;
     }
 }
