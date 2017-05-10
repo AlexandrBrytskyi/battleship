@@ -107,7 +107,7 @@ public class GUI extends JFrame {
         }
     }
 
-    public BitResult askedForBit() {
+    public void askedForBit() {
         try {
             appendMessage("Your turn to bitOpponentBoardSquare");
             canBeatMyButton.set(true);
@@ -123,11 +123,10 @@ public class GUI extends JFrame {
             }).get();
             bittedMyButton = null;
             canBeatMyButton.set(false);
-            return playerController.bitOpponentBoardSquare(bitted.getXVal(), bitted.getYVal());
+            playerController.bitOpponentBoardSquare(bitted.getXVal(), bitted.getYVal());
         } catch (Throwable e) {
             appendMessage("Sorry, have problem: " + e.getMessage());
             e.printStackTrace();
-            return askedForBit();
         }
     }
 
@@ -152,12 +151,11 @@ public class GUI extends JFrame {
         messagesArea.append(mess + "\n");
     }
 
-    public void showWinnerAndExit(String winnerId) {
-        messagesArea.append("Winner is " + winnerId + "\n");
-        showDialog(playerController.getMyId().equals(winnerId) ?
+    public void showWinner(boolean won) {
+        appendMessage("I am " + (won ? "winner" : "loser"));
+        showDialog(won ?
                         "You are winner, Congratulations!!!" : "You are loser, sorry :(",
                 "Game ended", JOptionPane.INFORMATION_MESSAGE);
-        System.exit(0);
     }
 
     public UserService getPlayerController() {
@@ -190,6 +188,7 @@ public class GUI extends JFrame {
         chatPanel.setPreferredSize(new Dimension(300, 400));
         chatPanel.setMaximumSize(new Dimension(300, 400));
         messagesArea = new JTextArea("Hi man\n");
+        chatPanel.add(new JScrollPane(messagesArea));
         JPanel messFieldButtonPanel = new JPanel(new GridLayout(2, 1));
         messageField = new JTextField("");
         sendMessageButton = new JButton("Send");
@@ -359,7 +358,7 @@ public class GUI extends JFrame {
                 public void mouseExited(MouseEvent e) {
                     try {
                         mouseExitedLock.lock();
-                        if (isChoosingShips.get()||!buttonsToChangeColour.isEmpty()) {
+                        if (isChoosingShips.get() || !buttonsToChangeColour.isEmpty()) {
                             buttonsToChangeColour.forEach(MyBoardButton::restoreColor);
                             buttonsToChangeColour.clear();
                         }

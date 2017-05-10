@@ -6,6 +6,7 @@ import org.battleship.GameMode;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class StartGuiPage extends JFrame {
 
@@ -13,10 +14,6 @@ public class StartGuiPage extends JFrame {
     private JComboBox<GameMode> typeComboBox;
     private JButton submit = new JButton();
     private JPanel addressPanel;
-    private JCheckBox connectCheckBox;
-    private JTextField host;
-    private JTextField port;
-    private boolean isShowingAddress = false;
 
     public StartGuiPage() throws HeadlessException {
         super("Select game type");
@@ -30,26 +27,16 @@ public class StartGuiPage extends JFrame {
 
     private void initMainPanel() {
 
-        initAddressPanel();
-
         typeComboBox = new JComboBox<>(GameMode.values());
-        typeComboBox.addActionListener(l -> {
-            if (typeComboBox.getSelectedItem().equals(GameMode.USER_USER_TCP_IP)) {
-                mainPanel.add(addressPanel, BorderLayout.CENTER);
-                isShowingAddress = true;
-                submit.setText("Create/Connect");
-            } else {
-                if (isShowingAddress) {
-                    mainPanel.remove(addressPanel);
-                    isShowingAddress = false;
-                }
-                submit.setText("Submit");
-            }
-        });
         submit = new JButton("Submit");
         submit.addActionListener(l -> {
             switch (((GameMode) typeComboBox.getSelectedItem())) {
                 case BOT_BOT: {
+                    AppBuilder.runBotBot(
+                            JOptionPane.showConfirmDialog(mainPanel, "Show bot gui?", "Bots board",
+                                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
+                                    JOptionPane.YES_OPTION ? true : false);
+                    StartGuiPage.this.dispose();
                     break;
                 }
                 case USER_BOT: {
@@ -71,6 +58,25 @@ public class StartGuiPage extends JFrame {
                     break;
                 }
                 case USER_USER_TCP_IP: {
+                    try {
+                        boolean isServer = JOptionPane.showConfirmDialog(mainPanel, "Are you main", "Game mode",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
+                                JOptionPane.YES_OPTION ? true : false;
+                        if (isServer) {
+                            AppBuilder.runServer(JOptionPane.showConfirmDialog(mainPanel, "Do you want to create ships?", "Ships generation",
+                                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
+                                    JOptionPane.NO_OPTION ? true : false);
+                        } else {
+                            String host = JOptionPane.showInputDialog("Enter host", "localhost");
+                            AppBuilder.runClient(host, JOptionPane.showConfirmDialog(mainPanel, "Do you want to create ships?", "Ships generation",
+                                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
+                                    JOptionPane.NO_OPTION ? true : false);
+                        }
+                        StartGuiPage.this.dispose();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(mainPanel, e.getMessage());
+                    }
                     break;
                 }
             }
@@ -81,32 +87,6 @@ public class StartGuiPage extends JFrame {
         mainPanel.add(submit, BorderLayout.SOUTH);
     }
 
-    private void initAddressPanel() {
-        addressPanel = new JPanel(new GridLayout(2, 1));
-        JPanel labelPanel = new JPanel(new BorderLayout());
-        labelPanel.add(new JLabel("Connect"), BorderLayout.EAST);
-        labelPanel.add(new JLabel("Host"), BorderLayout.CENTER);
-        labelPanel.add(new JLabel("Port"), BorderLayout.WEST);
-        addressPanel.add(labelPanel);
-        JPanel fieldsPanel = new JPanel(new BorderLayout());
-        connectCheckBox = new JCheckBox();
-        connectCheckBox.setSelected(false);
-        connectCheckBox.addActionListener(l -> {
-            if (connectCheckBox.isSelected()) {
-                host.setEditable(true);
-                port.setEditable(true);
-            } else {
-                host.setEditable(false);
-                port.setEditable(false);
-            }
-        });
-        host = new JTextField("localhost");
-        port = new JTextField("9999");
-        fieldsPanel.add(connectCheckBox, BorderLayout.EAST);
-        fieldsPanel.add(host, BorderLayout.CENTER);
-        fieldsPanel.add(port, BorderLayout.WEST);
-        addressPanel.add(fieldsPanel);
-    }
 
     public static void main(String[] args) {
         new StartGuiPage();

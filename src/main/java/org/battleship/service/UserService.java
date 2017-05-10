@@ -21,15 +21,11 @@ public interface UserService {
 
     void addShip(Ship ship, List<BoardSquare> shipPlaceOnBoard) throws SquareIsUnderShipException, UnsupportedShipException;
 
-    BitResult askedForBit();
+    void askedForBit();
 
-    BitResult bitOpponentBoardSquare(char x, int y) throws CantBitBorderSquareException;
+    void bitOpponentBoardSquare(char x, int y) throws CantBitBorderSquareException;
 
     BitResult oppenentBitsMyBoardSquare(char x, int y) throws CantBitBorderSquareException;
-
-    void setMyId(String id);
-
-    String getMyId();
 
     void messageReceived(String mess);
 
@@ -37,5 +33,13 @@ public interface UserService {
 
     void sendMessage(String message);
 
-    boolean getIsFilled();
+    boolean getReadyToPlay();
+
+    void setReadyToPlay(boolean isReady);
+
+    boolean getFilled();
+
+    void setFilled(boolean filled);
+
+    void setMyId(String id);
 }

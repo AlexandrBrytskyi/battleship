@@ -7,13 +7,15 @@ import org.battleship.model.bits.BitResult;
 import org.battleship.model.bits.MissedResult;
 import org.battleship.model.ships.Ship;
 
-public class BoardSquare implements BoardSquareHitObservable {
+import java.io.Serializable;
+
+public class BoardSquare implements BoardSquareHitObservable, Serializable {
 
     private int yPosition;
     private char xPosition;
     private boolean isUnderShip = false;
     private boolean canBit = true;
-    private Ship owner;
+    private transient Ship owner;
 
     public BoardSquare(int yPosition, char xPosition) {
         this.yPosition = yPosition;

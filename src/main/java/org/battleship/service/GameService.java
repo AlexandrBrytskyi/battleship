@@ -1,6 +1,7 @@
 package org.battleship.service;
 
 
+import org.battleship.controller.PlayerController;
 import org.battleship.exceptions.CantBitBorderSquareException;
 import org.battleship.model.bits.BitResult;
 

@@ -3,31 +3,34 @@ package org.battleship.controller;
 
 import org.battleship.exceptions.CantBitBorderSquareException;
 import org.battleship.model.bits.BitResult;
-import org.battleship.model.bits.OneMoreBittable;
+import org.battleship.model.bits.MissedActivity;
+import org.battleship.model.bits.MissedResult;
 import org.battleship.service.GameService;
 import org.battleship.service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class GameController implements GameService {
 
-    private Map<String, UserService> idUserServicesMap = new HashMap<String, UserService>();
+    private Map<String, PlayerController> idUserServicesMap = new HashMap<String, PlayerController>();
     private Map<String, AtomicInteger> idUserKilledShipsMap = new HashMap<String, AtomicInteger>();
     public static final int GOAL_SHIPS_TO_KILL = 10;
     private ExecutorService taskExecutor = Executors.newFixedThreadPool(4);
+    private AtomicReference<String> nowGoingId = new AtomicReference<>();
 
-    public GameController(UserService user1service, UserService user2service) {
-        putNewUserToMapAndGiveItIdentifier(user1service);
-        putNewUserToMapAndGiveItIdentifier(user2service);
+    public GameController(PlayerController user1Controller, PlayerController user2Controller) {
+        putNewUserToMapAndGiveItIdentifier(user1Controller);
+        putNewUserToMapAndGiveItIdentifier(user2Controller);
     }
 
     public void startLogic() {
+        checkReady();
         askForAddingShips();
         notifyGameStarted();
         while (true) {
@@ -37,10 +40,33 @@ public class GameController implements GameService {
         }
     }
 
-    private void putNewUserToMapAndGiveItIdentifier(UserService user1service) {
+    private void checkReady() {
+        PlayerController notReady = null;
+
+        for (PlayerController controller : idUserServicesMap.values()) {
+            if (controller.getReadyToPlay()) {
+                controller.messageReceived("Ok) see you are ready, waiting for opponent");
+            } else {
+                notReady = controller;
+            }
+        }
+
+        if (notReady != null) {
+            while (!notReady.getReadyToPlay()) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    private void putNewUserToMapAndGiveItIdentifier(PlayerController playerController) {
         String id = String.valueOf(System.nanoTime());
-        user1service.setMyId(id);
-        idUserServicesMap.put(id, user1service);
+        playerController.setMyId(id);
+        idUserServicesMap.put(id, playerController);
         idUserKilledShipsMap.put(id, new AtomicInteger());
     }
 
@@ -70,7 +96,7 @@ public class GameController implements GameService {
     private boolean checkIfBoardsIsFilled() {
         boolean res = true;
         for (UserService service : idUserServicesMap.values()) {
-            res &= service.getIsFilled();
+            res &= service.getFilled();
         }
         return res;
     }
@@ -83,21 +109,43 @@ public class GameController implements GameService {
 
 
     public void askForBit(String playerId) {
-        BitResult result = idUserServicesMap.get(playerId).askedForBit();
-        if (result instanceof OneMoreBittable) askForBit(playerId);
+        nowGoingId.set(playerId);
+        idUserServicesMap.get(playerId).askedForBit();
+        try {
+            taskExecutor.submit(() -> {
+                while (playerId.equals(nowGoingId.get())) try {
+                    System.out.println("waiting");
+                    System.out.println(playerId);
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).get();
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
 
     public void sendMessage(String playerId, String message) {
-        for (UserService service : idUserServicesMap.values()) {
-            service.messageReceived(playerId + ": " + message);
+        for (PlayerController service : idUserServicesMap.values()) {
+            service.messageReceived((playerId.equals(service.getMyId()) ? "Me" : "Opponent") + ": " + message);
         }
     }
 
     @Override
     public BitResult bitOpponent(char x, int y, String attackerServiceId) throws CantBitBorderSquareException {
+        System.out.println(attackerServiceId + "try to bit");
         System.out.println("game controller: pitting opponent");
         BitResult result = getOpponentService(attackerServiceId).oppenentBitsMyBoardSquare(x, y);
+        System.out.println(attackerServiceId + ", " + nowGoingId.get() + ", " + result.getClass().getName());
+        if (attackerServiceId.equals(nowGoingId.get()) && (result instanceof MissedResult)) {
+            nowGoingId.set(null);
+            System.out.println("setted null");
+        }
         System.out.println("game controller: returning res");
         return result;
     }

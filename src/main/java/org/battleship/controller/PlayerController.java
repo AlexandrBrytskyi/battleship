@@ -12,6 +12,7 @@ public abstract class PlayerController implements UserService, BitResultEvent {
     protected Board opponentBoard;
     protected GameService gameService;
     protected String myId;
+    protected boolean readyToPlay = true;
 
     public PlayerController() {
     }
@@ -46,7 +47,20 @@ public abstract class PlayerController implements UserService, BitResultEvent {
         this.gameService = gameService;
     }
 
-    public PlayerController(String myId) {
+    public String getMyId() {
+        return myId;
+    }
+
+    public void setMyId(String myId) {
         this.myId = myId;
     }
+
+    public boolean getReadyToPlay() {
+        return readyToPlay;
+    }
+
+    public void setReadyToPlay(boolean isReady) {
+        this.readyToPlay = isReady;
+    }
+
 }

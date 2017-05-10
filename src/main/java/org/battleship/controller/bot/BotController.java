@@ -1,6 +1,8 @@
-package org.battleship.controller;
+package org.battleship.controller.bot;
 
 
+import org.battleship.controller.ShipsGenUtils;
+import org.battleship.controller.user.UserPlayerController;
 import org.battleship.exceptions.CantBitBorderSquareException;
 import org.battleship.exceptions.SquareIsUnderShipException;
 import org.battleship.exceptions.UnsupportedShipException;
@@ -46,7 +48,12 @@ public class BotController extends UserPlayerController {
     }
 
     @Override
-    public BitResult askedForBit() {
+    public void askedForBit() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (useGui) gui.appendMessage("I am asked to bit!!!Ok");
         System.out.println("bot asked to bit");
 //        0 because we don`t put
@@ -56,21 +63,18 @@ public class BotController extends UserPlayerController {
         }
         System.out.println("generated such square for bit " + generated.getxPosition() + "-" + generated.getyPosition());
         try {
-            BitResult result = bitOpponentBoardSquare(generated.getxPosition(), generated.getyPosition());
-            alreadyBittedSquares.add(generated);
-            return result;
+           bitOpponentBoardSquare(generated.getxPosition(), generated.getyPosition());
+           alreadyBittedSquares.add(generated);
         } catch (CantBitBorderSquareException e) {
             e.printStackTrace();
             if (useGui) gui.appendMessage(e.getMessage());
         }
-        return null;
     }
 
     @Override
-    public BitResult bitOpponentBoardSquare(char x, int y) throws CantBitBorderSquareException {
-        BitResult result = super.bitOpponentBoardSquare(x, y);
+    public void bitOpponentBoardSquare(char x, int y) throws CantBitBorderSquareException {
+        super.bitOpponentBoardSquare(x, y);
         alreadyBittedSquares.add(new BoardSquare(y, x));
-        return result;
     }
 
 
@@ -103,10 +107,11 @@ public class BotController extends UserPlayerController {
 
     @Override
     public void notifiedEndGame(String winnerId) {
+        boolean won = winnerId.equals(myId) ? true : false;
         if (useGui) {
-            gui.showWinnerAndExit(winnerId);
+            gui.showWinner(won);
         } else {
-            System.out.println(myId.equals(winnerId) ? "I won" : "I am looser");
+            System.out.println(won ? "I won" : "I am looser");
         }
     }
 

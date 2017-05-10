@@ -38,7 +38,7 @@ public class ShipsGenUtils {
             service.addShip(new StraightShip("Generated:" + shipSize, shipSize), shipPlaceOnBoard);
         } catch (Throwable e) {
 //            System.out.println("Cant add generated ship, " + e.getMessage());
-            if (useGui) gui.appendMessage(e.getMessage());
+//            if (useGui) gui.appendMessage(e.getMessage());
             tryToAddGeneratedShip(shipSize, service, useGui, gui, alreadyGenerated, horisontalShipGenFlipper, boardTopChars);
         }
     }
@@ -83,7 +83,7 @@ public class ShipsGenUtils {
 
 
     private static int getRandomIndex(int shipSize, int maxAvalibaleValue) {
-        return (int) (Math.random() * (maxAvalibaleValue - shipSize));
+        return (int) (Math.random() * (maxAvalibaleValue - shipSize+1));
     }
 
     private static List<BoardSquare> getHorizontalShipSquares(char xChar, int y, int shipSize, String boardTopChars) {

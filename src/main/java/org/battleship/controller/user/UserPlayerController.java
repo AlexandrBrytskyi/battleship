@@ -1,5 +1,7 @@
-package org.battleship.controller;
+package org.battleship.controller.user;
 
+import org.battleship.controller.PlayerController;
+import org.battleship.controller.ShipsGenUtils;
 import org.battleship.exceptions.CantBitBorderSquareException;
 import org.battleship.exceptions.SquareIsUnderShipException;
 import org.battleship.exceptions.UnsupportedShipException;
@@ -34,7 +36,7 @@ public class UserPlayerController extends PlayerController {
         if (!autogenShips) {
             gui.askedForAddingShips();
         } else {
-           ShipsGenUtils.generateAndAddShips(this, true, gui, getMyBoard().getBorderTopName());
+            ShipsGenUtils.generateAndAddShips(this, true, gui, getMyBoard().getBorderTopName());
         }
     }
 
@@ -47,19 +49,18 @@ public class UserPlayerController extends PlayerController {
         gui.markSquaresAsMyShips(shipPlaceOnBoard);
     }
 
-    public BitResult askedForBit() {
-        return gui.askedForBit();
+    public void askedForBit() {
+        gui.askedForBit();
     }
 
 
-    public BitResult bitOpponentBoardSquare(char x, int y) throws CantBitBorderSquareException {
+    public void bitOpponentBoardSquare(char x, int y) throws CantBitBorderSquareException {
         System.out.println("UPC: sending game controller request to bit");
         BitResult result = gameService.bitOpponent(x, y, myId);
         System.out.println("UPC: received bit result");
         result.setActivityRealizator(this);
         result.afterResultReceivedAction(true);
         System.out.println("UPC: executed and returning bit result");
-        return result;
     }
 
     @Override
@@ -116,7 +117,7 @@ public class UserPlayerController extends PlayerController {
     }
 
     public void notifiedEndGame(String winnerId) {
-        gui.showWinnerAndExit(winnerId);
+        gui.showWinner(winnerId.equals(myId) ? true : false);
     }
 
     @Override
@@ -125,8 +126,18 @@ public class UserPlayerController extends PlayerController {
     }
 
     @Override
-    public boolean getIsFilled() {
+    public boolean getReadyToPlay() {
+        return readyToPlay;
+    }
+
+    @Override
+    public boolean getFilled() {
         return myBoard.isReadyToPlay();
+    }
+
+    @Override
+    public void setFilled(boolean filled) {
+
     }
 
     public void setMyId(String myId) {
