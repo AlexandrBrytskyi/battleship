@@ -6,6 +6,8 @@ import org.battleship.model.boards.BoardSquare;
 
 import java.util.List;
 
+/**
+ * object of this class describes a straight ship*/
 public class StraightShip extends Ship {
 
     private int length;

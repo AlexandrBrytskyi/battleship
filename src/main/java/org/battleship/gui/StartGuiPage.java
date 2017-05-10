@@ -7,7 +7,8 @@ import org.battleship.GameMode;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-
+/**
+ * form to select {@link org.battleship.GameMode}*/
 public class StartGuiPage extends JFrame {
 
     private JPanel mainPanel;

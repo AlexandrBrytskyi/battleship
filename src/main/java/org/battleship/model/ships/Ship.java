@@ -7,6 +7,11 @@ import org.battleship.model.boards.BoardSquare;
 
 import java.util.List;
 
+/**
+ * entity which describe ship on {@link Board}
+ * it contains only main info
+ * @see StraightShip
+ */
 public abstract class Ship implements BoardSquareHitObserver {
 
     private String name;
@@ -26,11 +31,11 @@ public abstract class Ship implements BoardSquareHitObserver {
     protected BitResult shipHitted(BoardSquare boardSquare) {
         hittedSquaresCounter++;
         if (hittedSquaresCounter == placeOnBoard.size()) return shipDestroyed();
-       return ownerBoard.shipBitted(boardSquare, this);
+        return ownerBoard.shipBitted(boardSquare, this);
     }
 
     protected BitResult shipDestroyed() {
-      return   ownerBoard.shipDestroyed(this);
+        return ownerBoard.shipDestroyed(this);
     }
 
 

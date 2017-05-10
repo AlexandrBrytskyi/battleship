@@ -1,10 +1,13 @@
 package org.battleship.service;
 
 
-import org.battleship.controller.PlayerController;
 import org.battleship.exceptions.CantBitBorderSquareException;
 import org.battleship.model.bits.BitResult;
 
+
+/**
+ * interface which describes all events which can be made by {@link org.battleship.controller.GameController}
+ */
 public interface GameService {
 
     void askForAddingShips();

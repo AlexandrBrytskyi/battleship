@@ -1,32 +1,28 @@
 package org.battleship.controller.user.remote;
 
 
-import org.battleship.controller.ShipsGenUtils;
-import org.battleship.controller.user.UserPlayerController;
+import org.battleship.controller.Ships10x10GenUtils;
 import org.battleship.controller.user.remote.requests.*;
-import org.battleship.controller.user.remote.responses.ICallback;
-import org.battleship.controller.user.remote.responses.SimpleCallback;
 import org.battleship.exceptions.CantBitBorderSquareException;
 import org.battleship.exceptions.SquareIsUnderShipException;
 import org.battleship.exceptions.UnsupportedShipException;
 import org.battleship.gui.GUI;
-import org.battleship.model.bits.BitResult;
 import org.battleship.model.boards.Board;
 import org.battleship.model.boards.BoardSquare;
 import org.battleship.model.ships.Ship;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
+
+/**
+ * Controller which is runned on remote client and communicate with server over {@link Socket}
+ *
+ * @see ObjectInputStream
+ * @see ObjectOutputStream
+ */
 public class RemoteUserClientController extends RemoteUserController {
-
-
 
 
     public RemoteUserClientController(GUI gui, Board myBoard, Board opponentBoard, boolean autogenShips, String host) throws IOException {
@@ -36,7 +32,7 @@ public class RemoteUserClientController extends RemoteUserController {
         ois = new ObjectInputStream(clientSocket.getInputStream());
         initInputListener();
         readyToPlay = true;
-        sendObject(new ReadyToPlayRequest(), false);
+        sendObject(new ReadyToPlayRequest());
     }
 
 
@@ -44,7 +40,7 @@ public class RemoteUserClientController extends RemoteUserController {
         if (!autogenShips) {
             gui.askedForAddingShips();
         } else {
-            ShipsGenUtils.generateAndAddShips(this, true, gui, getMyBoard().getBorderTopName());
+            Ships10x10GenUtils.generateAndAddShips(this, true, gui, getMyBoard().getBorderTopName());
         }
     }
 
@@ -56,7 +52,7 @@ public class RemoteUserClientController extends RemoteUserController {
         myBoard.putShipOnBoard(ship, shipPlaceOnBoard);
         gui.markSquaresAsMyShips(shipPlaceOnBoard);
         if (myBoard.isReadyToPlay()) {
-            sendObject(new FilledRequest(), false);
+            sendObject(new FilledRequest());
         }
     }
 
@@ -67,7 +63,7 @@ public class RemoteUserClientController extends RemoteUserController {
 
     public void bitOpponentBoardSquare(char x, int y) throws CantBitBorderSquareException {
         System.out.println("before bitting");
-        sendObject(new BitOpponentBoardSquareRequest(x, y), true);
+        sendObject(new BitOpponentBoardSquareRequest(x, y));
     }
 
     public void markOpponentsBorderSquareAsMissed(BoardSquare missedBorderSquare) {
@@ -104,7 +100,7 @@ public class RemoteUserClientController extends RemoteUserController {
 
     @Override
     public void sendMessage(String message) {
-        sendObject(new SendMessageRequest(message), false);
+        sendObject(new SendMessageRequest(message));
     }
 
     @Override
@@ -126,7 +122,9 @@ public class RemoteUserClientController extends RemoteUserController {
 
     @Override
     public void requestReceived(Request request) {
-        executorService.submit(()->{request.setEventWorker(this);
-            request.requestReceivedAction();});
+        executorService.submit(() -> {
+            request.setEventWorker(this);
+            request.requestReceivedAction();
+        });
     }
 }

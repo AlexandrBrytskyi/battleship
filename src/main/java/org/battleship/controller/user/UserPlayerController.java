@@ -1,7 +1,7 @@
 package org.battleship.controller.user;
 
 import org.battleship.controller.PlayerController;
-import org.battleship.controller.ShipsGenUtils;
+import org.battleship.controller.Ships10x10GenUtils;
 import org.battleship.exceptions.CantBitBorderSquareException;
 import org.battleship.exceptions.SquareIsUnderShipException;
 import org.battleship.exceptions.UnsupportedShipException;
@@ -15,6 +15,12 @@ import org.battleship.service.GameService;
 
 import java.util.List;
 
+/**
+ * realization of {@link PlayerController} which fully overrides methods of {@link BitResultEvent}
+ *
+ * @see org.battleship.controller.bot.BotController
+ * @see org.battleship.controller.user.remote.RemoteUserController
+ */
 public class UserPlayerController extends PlayerController {
 
     protected GUI gui;
@@ -36,7 +42,7 @@ public class UserPlayerController extends PlayerController {
         if (!autogenShips) {
             gui.askedForAddingShips();
         } else {
-            ShipsGenUtils.generateAndAddShips(this, true, gui, getMyBoard().getBorderTopName());
+            Ships10x10GenUtils.generateAndAddShips(this, true, gui, getMyBoard().getBorderTopName());
         }
     }
 
@@ -78,6 +84,7 @@ public class UserPlayerController extends PlayerController {
         BoardSquare square = opponentBoard.getBorderSquareByCharXIntY(missedBorderSquare.getxPosition(), missedBorderSquare.getyPosition());
         square.setCanBit(false);
         square.setUnderShip(false);
+        sendMessage("missed on: " + missedBorderSquare.getxPosition() + ":" + missedBorderSquare.getyPosition());
         gui.updateOpponentSquare(square);
     }
 
@@ -88,6 +95,7 @@ public class UserPlayerController extends PlayerController {
 
     public void markOpponentsSquareAsBitted(BoardSquare bittedSquare) {
         BoardSquare oppSquare = opponentBoard.getBorderSquareByCharXIntY(bittedSquare.getxPosition(), bittedSquare.getyPosition());
+        sendMessage("bitted on: " + bittedSquare.getxPosition() + ":" + bittedSquare.getyPosition());
         oppSquare.setCanBit(false);
         oppSquare.setUnderShip(true);
         gui.updateOpponentSquare(oppSquare);
@@ -98,10 +106,12 @@ public class UserPlayerController extends PlayerController {
     }
 
     public void markShipOnOpponentBoard(List<BoardSquare> squares) {
-
+        StringBuilder mess = new StringBuilder("Destroyed ship on: ");
         for (BoardSquare square : squares) {
             markOpponentsSquareAsBitted(square);
+            mess.append(square.getxPosition()).append('-').append(square.getyPosition()).append(',');
         }
+        sendMessage(mess.toString());
 
         gameService.shipKilled(myId);
     }

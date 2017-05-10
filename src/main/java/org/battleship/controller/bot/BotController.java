@@ -1,19 +1,21 @@
 package org.battleship.controller.bot;
 
 
-import org.battleship.controller.ShipsGenUtils;
+import org.battleship.controller.Ships10x10GenUtils;
 import org.battleship.controller.user.UserPlayerController;
 import org.battleship.exceptions.CantBitBorderSquareException;
 import org.battleship.exceptions.SquareIsUnderShipException;
 import org.battleship.exceptions.UnsupportedShipException;
 import org.battleship.gui.GUI;
-import org.battleship.model.bits.BitResult;
 import org.battleship.model.boards.Board;
 import org.battleship.model.boards.BoardSquare;
 import org.battleship.model.ships.Ship;
 
 import java.util.*;
 
+/**
+ * overrides some methods of {@link UserPlayerController} in order to set bot logic
+ */
 public class BotController extends UserPlayerController {
 
 
@@ -31,7 +33,7 @@ public class BotController extends UserPlayerController {
 
     @Override
     public void askedForAddingShips() {
-        ShipsGenUtils.generateAndAddShips(this, useGui, gui, getMyBoard().getBorderTopName());
+        Ships10x10GenUtils.generateAndAddShips(this, useGui, gui, getMyBoard().getBorderTopName());
     }
 
     @Override
@@ -57,14 +59,14 @@ public class BotController extends UserPlayerController {
         if (useGui) gui.appendMessage("I am asked to bit!!!Ok");
         System.out.println("bot asked to bit");
 //        0 because we don`t put
-        BoardSquare generated = ShipsGenUtils.generateRandomSquareForAddingShips(0, boardTopChars);
+        BoardSquare generated = Ships10x10GenUtils.generateRandomSquareForAddingShips(0, boardTopChars);
         while (alreadyBittedSquares.contains(generated)) {
-            generated = ShipsGenUtils.generateRandomSquareForAddingShips(0, boardTopChars);
+            generated = Ships10x10GenUtils.generateRandomSquareForAddingShips(0, boardTopChars);
         }
         System.out.println("generated such square for bit " + generated.getxPosition() + "-" + generated.getyPosition());
         try {
-           bitOpponentBoardSquare(generated.getxPosition(), generated.getyPosition());
-           alreadyBittedSquares.add(generated);
+            bitOpponentBoardSquare(generated.getxPosition(), generated.getyPosition());
+            alreadyBittedSquares.add(generated);
         } catch (CantBitBorderSquareException e) {
             e.printStackTrace();
             if (useGui) gui.appendMessage(e.getMessage());

@@ -11,6 +11,9 @@ import org.battleship.model.ships.Ship;
 
 import java.util.List;
 
+/**
+ * interface describes possible actions which should differ in order of type of {@link org.battleship.controller.PlayerController}
+ */
 public interface UserService {
 
     void registerToGame();

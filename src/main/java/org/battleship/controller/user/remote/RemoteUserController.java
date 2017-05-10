@@ -1,7 +1,6 @@
 package org.battleship.controller.user.remote;
 
 
-
 import org.battleship.controller.user.UserPlayerController;
 import org.battleship.controller.user.remote.requests.*;
 
@@ -22,6 +21,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * describes common behaivour of all {@link RemoteUserService}
+ */
 public abstract class RemoteUserController extends UserPlayerController implements RemoteUserService {
 
     public static final int PORT = 9999;
@@ -42,13 +44,13 @@ public abstract class RemoteUserController extends UserPlayerController implemen
 
 
     @Override
-    public void sendObject(Serializable object, boolean waitForResponse) {
-            try {
-                oos.writeObject(object);
-                System.out.println("sent " + object.getClass().getName());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public void sendObject(Serializable object) {
+        try {
+            oos.writeObject(object);
+            System.out.println("sent " + object.getClass().getName());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

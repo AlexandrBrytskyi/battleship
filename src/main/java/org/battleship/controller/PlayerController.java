@@ -6,6 +6,11 @@ import org.battleship.model.boards.Board;
 import org.battleship.service.GameService;
 import org.battleship.service.UserService;
 
+/**
+ * wrapper on {@link UserService} which does not fully override methods of {@link BitResultEvent}
+ *
+ * @see org.battleship.controller.user.UserPlayerController
+ */
 public abstract class PlayerController implements UserService, BitResultEvent {
 
     protected Board myBoard;

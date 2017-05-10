@@ -9,6 +9,12 @@ import org.battleship.model.ships.Ship;
 
 import java.util.*;
 
+/**
+ * class which holds main attributes and functionality of board
+ * it`s abstract as can have different realisations
+ *
+ * @see TenXTenStandardBoard
+ */
 public abstract class Board {
 
     protected BoardSquare[][] squares;
@@ -33,7 +39,7 @@ public abstract class Board {
     public abstract void putShipOnBoard(Ship ship, List<BoardSquare> squares) throws UnsupportedShipException, SquareIsUnderShipException;
 
     public BitResult squareAtacked(char x, int y) throws CantBitBorderSquareException {
-       return getBorderSquareByCharXIntY(x, y).hitMe();
+        return getBorderSquareByCharXIntY(x, y).hitMe();
     }
 
     public abstract BitResult shipBitted(BoardSquare square, Ship ship);
@@ -112,7 +118,6 @@ public abstract class Board {
         }
         return res.toString();
     }
-
 
 
 }

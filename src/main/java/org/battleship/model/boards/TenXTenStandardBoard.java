@@ -14,7 +14,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
+/**
+ * concrete realisation of {@link Board} which describes rules of data flow on it*/
 public class TenXTenStandardBoard extends Board {
 
     public static int SHIPS_AMOUNT_NEEDED = 10;

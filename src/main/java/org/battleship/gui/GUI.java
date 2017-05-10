@@ -20,6 +20,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
+/**
+ * linked with {@link PlayerController} in order to manage user input and controller output
+ */
 public class GUI extends JFrame {
 
     public static final int BOARD_DIMENSION = 10;

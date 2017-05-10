@@ -15,6 +15,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * is used inject dependencies in order to start application due to {@link GameMode}
+ */
 public class AppBuilder {
 
     private static ExecutorService gameExecutor = Executors.newFixedThreadPool(3);

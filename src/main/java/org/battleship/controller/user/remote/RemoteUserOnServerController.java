@@ -18,6 +18,15 @@ import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.*;
 
+
+/**
+ * Controller which is runned on server, most of all methods wrapped by sending {@link Request}
+ * and receiving {@link BitResult}
+ * over {@link Socket}
+ *
+ * @see ObjectInputStream
+ * @see ObjectOutputStream
+ */
 public class RemoteUserOnServerController extends RemoteUserController {
 
     public static final int PORT = 9999;
@@ -57,11 +66,11 @@ public class RemoteUserOnServerController extends RemoteUserController {
     }
 
     public void askedForAddingShips() {
-        sendObject(new AskedForAddingShipRequest(), false);
+        sendObject(new AskedForAddingShipRequest());
     }
 
     public void notifiedGameStarts() {
-        sendObject(new NotifiedGameStartsRequest(), true);
+        sendObject(new NotifiedGameStartsRequest());
     }
 
     public void addShip(Ship ship, List<BoardSquare> shipPlaceOnBoard) throws SquareIsUnderShipException, UnsupportedShipException {
@@ -69,7 +78,7 @@ public class RemoteUserOnServerController extends RemoteUserController {
     }
 
     public void askedForBit() {
-        sendObject(new AskedForBitRequest(), true);
+        sendObject(new AskedForBitRequest());
         System.out.println("sent ask for bit");
     }
 
@@ -77,7 +86,7 @@ public class RemoteUserOnServerController extends RemoteUserController {
     @Override
     public BitResult oppenentBitsMyBoardSquare(char x, int y) throws CantBitBorderSquareException {
 //        must be realized by client
-        sendObject(new OppenentBitsMyBoardSquareRequest(x, y), true);
+        sendObject(new OppenentBitsMyBoardSquareRequest(x, y));
         try {
             BitResult res = bitResults.poll(1, TimeUnit.DAYS);
             System.out.println("opponent bit res " + res.getClass().getName());
@@ -89,16 +98,16 @@ public class RemoteUserOnServerController extends RemoteUserController {
     }
 
     public void markOpponentsBorderSquareAsMissed(BoardSquare missedBorderSquare) {
-        sendObject(new MarkOpponentsBorderSquareAsMissedRequest(missedBorderSquare), true);
+        sendObject(new MarkOpponentsBorderSquareAsMissedRequest(missedBorderSquare));
     }
 
     @Override
     public void mySquareChanged(BoardSquare toUpdate) {
-        sendObject(new MySquareChangedRequest(toUpdate), true);
+        sendObject(new MySquareChangedRequest(toUpdate));
     }
 
     public void markOpponentsSquareAsBitted(BoardSquare bittedSquare) {
-        sendObject(new MarkOpponentsSquareAsBittedRequest(bittedSquare), true);
+        sendObject(new MarkOpponentsSquareAsBittedRequest(bittedSquare));
     }
 
 
@@ -114,12 +123,12 @@ public class RemoteUserOnServerController extends RemoteUserController {
     }
 
     public void messageReceived(String mess) {
-        sendObject(new MessageReceivedRequest(mess), false);
+        sendObject(new MessageReceivedRequest(mess));
     }
 
     public void notifiedEndGame(String winnerId) {
 
-        sendObject(new NotifiedEndGameRequest(winnerId.equals(myId) ? true : false), false);
+        sendObject(new NotifiedEndGameRequest(winnerId.equals(myId) ? true : false));
     }
 
     @Override

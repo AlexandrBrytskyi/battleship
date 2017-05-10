@@ -9,6 +9,9 @@ import org.battleship.model.ships.Ship;
 
 import java.io.Serializable;
 
+/**
+ * the most little part of structure
+ * {@link Board} and {@link Ship} are built from entities of this class*/
 public class BoardSquare implements BoardSquareHitObservable, Serializable {
 
     private int yPosition;

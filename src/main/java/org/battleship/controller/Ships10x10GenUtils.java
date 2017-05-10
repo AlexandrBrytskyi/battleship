@@ -12,7 +12,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ShipsGenUtils {
+/**
+ * static methods of this class used for generating ships for {@link org.battleship.model.boards.TenXTenStandardBoard}
+ */
+public final class Ships10x10GenUtils {
 
 
     public static void generateAndAddShips(UserService service, boolean useGui, GUI gui, String boardTopChars) {
@@ -83,7 +86,7 @@ public class ShipsGenUtils {
 
 
     private static int getRandomIndex(int shipSize, int maxAvalibaleValue) {
-        return (int) (Math.random() * (maxAvalibaleValue - shipSize+1));
+        return (int) (Math.random() * (maxAvalibaleValue - shipSize + 1));
     }
 
     private static List<BoardSquare> getHorizontalShipSquares(char xChar, int y, int shipSize, String boardTopChars) {
