@@ -19,9 +19,9 @@ public class OppenentBitsMyBoardSquareRequest extends Request {
     @Override
     public void sendCallback() {
         if (res != null) {
-            eventWorker.sendObject(res, false);
+            eventWorker.sendObject(res);
         } else {
-            eventWorker.sendObject(e, false);
+            eventWorker.sendObject(e);
         }
     }
 

@@ -1,10 +1,6 @@
 package org.battleship.controller.user.remote.requests;
 
-import org.battleship.controller.user.remote.responses.SimpleCallback;
 import org.battleship.exceptions.CantBitBorderSquareException;
-import org.battleship.model.bits.BitResult;
-
-import java.io.Serializable;
 
 
 public class BitOpponentBoardSquareRequest extends Request {
@@ -22,7 +18,7 @@ public class BitOpponentBoardSquareRequest extends Request {
     public void sendCallback() {
 
         if (e != null) {
-            eventWorker.sendObject(e, false);
+            eventWorker.sendObject(e);
         }
 
     }

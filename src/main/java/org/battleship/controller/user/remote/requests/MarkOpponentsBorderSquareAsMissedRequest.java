@@ -1,9 +1,6 @@
 package org.battleship.controller.user.remote.requests;
 
-import org.battleship.controller.user.remote.responses.SimpleCallback;
 import org.battleship.model.boards.BoardSquare;
-
-import java.io.Serializable;
 
 
 public class MarkOpponentsBorderSquareAsMissedRequest extends Request {

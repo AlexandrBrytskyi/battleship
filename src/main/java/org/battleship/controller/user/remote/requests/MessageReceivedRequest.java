@@ -1,7 +1,5 @@
 package org.battleship.controller.user.remote.requests;
 
-import java.io.Serializable;
-
 
 public class MessageReceivedRequest extends Request {
    private String mess;
